@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Sunset Moon Site Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f6f3; --surface:#ffffff; --sunk:#eaeeea; --ink:#1d2624; --muted:#56615e; --line:#d6dbd6;
+  --accent:#1f5c55; --accent-ink:#ffffff; --accent-soft:#dcebe7;
+  --serious:#a4231c; --serious-soft:#f6e1de; --moderate:#7d5200; --moderate-soft:#f5ead3;
+  --later:#3f4b7a; --later-soft:#e3e6f2;
+  --display:"Spectral", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716; --surface:#1a2120; --sunk:#202927; --ink:#e6ebe8; --muted:#a0aca8; --line:#34403d;
+    --accent:#86cabd; --accent-ink:#0f1a18; --accent-soft:#1f3632;
+    --serious:#f29b91; --serious-soft:#3a1f1c; --moderate:#e6bd6e; --moderate-soft:#352a14;
+    --later:#b3bdf0; --later-soft:#252a44;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716; --surface:#1a2120; --sunk:#202927; --ink:#e6ebe8; --muted:#a0aca8; --line:#34403d;
+  --accent:#86cabd; --accent-ink:#0f1a18; --accent-soft:#1f3632;
+  --serious:#f29b91; --serious-soft:#3a1f1c; --moderate:#e6bd6e; --moderate-soft:#352a14;
+  --later:#b3bdf0; --later-soft:#252a44;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;padding-inline:20px;padding-block:0 64px}
+.wrap{max-width:760px;margin:0 auto}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);letter-spacing:-.01em}
+h2{font-size:1.65rem;margin-bottom:.5rem}
+h3{font-size:1.15rem;margin-top:1.6rem;margin-bottom:.4rem}
+p{margin:0 0 .9rem}
+ul,ol{margin:0 0 1rem;padding-left:1.25rem;display:grid;gap:.5rem}
+code{font-family:var(--mono);font-size:.86em;background:var(--sunk);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header.top{padding-block:48px 28px;border-bottom:1px solid var(--line);display:grid;gap:14px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:.92rem;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.url{font-family:var(--mono);font-size:.95rem;color:var(--muted);overflow-wrap:anywhere}
+section.sec{padding-block:40px 8px}
+.lead{font-size:1.08rem}
+.note{font-size:.9rem;color:var(--muted)}
+/* scorecard */
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:4px;align-content:start}
+.tile .k{font-family:var(--mono);font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tile .n{font-family:var(--display);font-size:2.1rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .d{font-size:.9rem;color:var(--muted);line-height:1.45}
+.sev{display:inline-block;font-family:var(--mono);font-size:.72rem;padding:.1em .5em;border-radius:99px;margin-right:4px}
+.sev.s{background:var(--serious-soft);color:var(--serious)}
+.sev.m{background:var(--moderate-soft);color:var(--moderate)}
+/* top issues */
+ol.issues{counter-reset:i;list-style:none;padding:0;gap:0;border-top:1px solid var(--line)}
+ol.issues li{display:grid;grid-template-columns:2rem 1fr;gap:10px;padding-block:14px;border-bottom:1px solid var(--line)}
+ol.issues li::before{counter-increment:i;content:counter(i);font-family:var(--display);font-size:1.3rem;color:var(--accent);line-height:1.3}
+/* gate */
+.gate{margin-top:44px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.gate-head{padding:26px 26px 6px}
+.contents{list-style:none;padding:0 26px;margin:14px 0 0;gap:0}
+.contents li{display:flex;justify-content:space-between;gap:16px;padding-block:10px;border-top:1px dashed var(--line);font-size:.96rem}
+.contents li span:last-child{color:var(--muted);font-family:var(--mono);font-size:.82rem;text-align:right;white-space:nowrap}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:22px;border-top:1px solid var(--line);background:var(--sunk)}
+.pay > div{padding:22px 26px;display:grid;gap:10px;align-content:start}
+.pay > div + div{border-left:1px solid var(--line)}
+.price{font-family:var(--display);font-size:2.4rem;line-height:1}
+.handle{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.handle output{font-family:var(--mono);font-size:1.05rem;background:var(--surface);border:1px solid var(--line);padding:.3em .6em;border-radius:6px;user-select:all}
+.btn{appearance:none;border:0;border-radius:8px;padding:.7em 1.1em;font:600 .95rem/1 var(--body);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);min-height:36px;padding:.45em .8em;font-size:.85rem}
+label{font-weight:600;font-size:.95rem}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+input[type=text]{font:500 1.05rem var(--mono);letter-spacing:.06em;text-transform:uppercase;width:100%;padding:.65em .75em;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input{flex:1 1 180px}
+.status{min-height:1.4em;font-size:.9rem;margin:0}
+.status.err{color:var(--serious)}
+.status.ok{color:var(--accent)}
+/* unlocked report */
+.tablewrap{overflow-x:auto;margin:14px 0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:560px}
+caption{text-align:left;padding:10px 14px;color:var(--muted);font-size:.85rem;caption-side:top}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-top:1px solid var(--line)}
+thead th{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk);border-top:0}
+tbody th{font-weight:600}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pri{font-family:var(--mono);font-size:.74rem;padding:.15em .55em;border-radius:99px;white-space:nowrap}
+.p1{background:var(--serious-soft);color:var(--serious)}
+.p2{background:var(--moderate-soft);color:var(--moderate)}
+.p3{background:var(--later-soft);color:var(--later)}
+.unlocked-banner{margin-top:44px;padding:14px 18px;border-radius:10px;background:var(--accent-soft);font-size:.95rem}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:620px){
+  .pay{grid-template-columns:1fr}
+  .pay > div + div{border-left:0;border-top:1px solid var(--line)}
+  .gate-head,.contents{padding-inline:18px}
+  .pay > div{padding:20px 18px}
+  .contents li{flex-direction:column;gap:2px}
+  .contents li span:last-child{text-align:left;white-space:normal}
+}
+@media (prefers-reduced-motion:no-preference){ #report{animation:none} }
+</style><style>
+.skip{position:absolute;left:-9999px;top:8px;background:var(--accent);color:var(--accent-ink);padding:.5em .9em;border-radius:6px;z-index:10}
+.skip:focus{left:16px}
+a.gl{color:inherit;text-decoration:underline dotted;text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:2px}
+a.gl:hover{color:var(--accent)}
+nav.toc{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 22px}
+nav.toc ol{margin:.5rem 0 0;gap:.3rem}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:16px 0}
+.box h3{margin-top:0}
+.fix{border-top:1px solid var(--line);padding-block:26px 6px}
+.fix:first-of-type{border-top:0}
+.fix h3{margin-top:0;font-size:1.3rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:.4rem 0 .9rem}
+.tag{font-family:var(--mono);font-size:.74rem;padding:.2em .6em;border-radius:99px;background:var(--sunk);color:var(--muted)}
+.tag.you{background:var(--accent-soft);color:var(--accent)}
+.tag.host{background:var(--moderate-soft);color:var(--moderate)}
+.tag.dev{background:var(--later-soft);color:var(--later)}
+.label{font-family:var(--mono);font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .3rem;display:block}
+ol.steps{counter-reset:s;list-style:none;padding:0;gap:.6rem}
+ol.steps > li{display:grid;grid-template-columns:1.8rem minmax(0,1fr);gap:8px}
+ol.steps > li::before{counter-increment:s;content:counter(s);font-family:var(--mono);font-size:.8rem;width:1.6rem;height:1.6rem;border-radius:99px;display:grid;place-items:center;background:var(--sunk);color:var(--ink);margin-top:.1rem}
+.path{overflow-wrap:anywhere;font-family:var(--mono);font-size:.88em;background:var(--sunk);padding:.05em .4em;border-radius:4px}
+.example{border-left:3px solid var(--accent);padding:.4rem 0 .4rem 1rem;margin:.6rem 0 1rem;color:var(--ink)}
+dl.gloss{display:grid;gap:0;margin:0}
+dl.gloss > div{padding-block:14px;border-top:1px solid var(--line);scroll-margin-top:16px}
+dl.gloss > div:target{background:var(--accent-soft);padding-inline:12px;border-radius:8px}
+dl.gloss dt{font-weight:700;font-family:var(--display);font-size:1.08rem}
+dl.gloss dd{margin:.25rem 0 0}
+.top-link{font-size:.85rem}
+</style>
+<style>
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:18px 0 6px}
+.compare figure{margin:0;display:grid;gap:8px;align-content:start}
+.compare figcaption{font-size:.92rem}
+.demo{border-radius:10px;padding:28px 22px;display:grid;gap:10px;min-height:190px;align-content:center}
+.demo-bad{background:linear-gradient(135deg,#c9b6e4,#f1c4d6);text-align:center;color:#fff;text-shadow:0 1px 2px rgba(120,90,140,.5)}
+.demo-bad .demo-h{font-family:var(--display);font-size:1.6rem;letter-spacing:.08em}
+.demo-bad .demo-p{font-style:italic}
+.demo-good{background:#fbf8fc;color:#2b1f33;border:1px solid #e6dcec}
+.demo-good .demo-h{font-family:var(--display);font-size:1.6rem;font-weight:600}
+.demo-btn{justify-self:start;background:#5b3a73;color:#fff;border-radius:8px;padding:.55em 1em;font-weight:600;font-size:.92rem}
+ol.rules{padding-left:1.4rem;gap:.8rem}
+.flow{margin:18px 0 8px}
+.flowwrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.flowwrap svg{display:block;width:100%;min-width:640px;max-width:780px;height:auto;margin:0 auto}
+.fc-node{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.fc-start{fill:var(--sunk);stroke:var(--line);stroke-width:1.5}
+.fc-goal{fill:var(--accent);stroke:var(--accent)}
+.fc-end{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.fc-line{stroke:var(--muted);stroke-width:1.5;fill:none}
+.fc-arrowhead{fill:var(--muted)}
+.fc-t{fill:var(--ink);font-family:var(--body);font-size:13px}
+.fc-b{font-weight:700;font-size:14px}
+.fc-s{fill:var(--muted);font-size:12px}
+.fc-goal-t{fill:var(--accent-ink)}
+.paths-text h4{font-family:var(--display);font-size:1.02rem;margin:1rem 0 .4rem}
+</style>
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to the report</a>
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">Website audit · Inclusive Creative</span>
+  <h1>Sunset Moon Wellness Center</h1>
+  <span class="url">sunsetmoonwellnesscenter.com</span>
+  <div class="meta">
+    <span>Reviewed <b>September 25, 2026</b></span>
+    <span><b>6</b> key pages</span>
+    <span>Plain-language edition</span>
+  </div>
+</header>
+
+<main id="main">
+<section class="sec" aria-labelledby="how-h">
+  <h2 id="how-h">How to use this report</h2>
+  <p class="lead">This report is written for a site owner, not a programmer. Each problem explains what’s wrong, why it matters, and how to fix it, step by step.</p>
+  <p>Words with a <a class="gl" href="#glossary">dotted underline</a> are explained in the <a href="#glossary">glossary</a> at the end. Select one to jump to its meaning.</p>
+  <p>Each fix is labeled with who can do it:</p>
+  <div class="tags">
+    <span class="tag you">You can do this</span>
+    <span class="tag host">Ask your web host</span>
+    <span class="tag dev">Hire a developer</span>
+  </div>
+  <div class="box">
+    <h3>Before you change anything</h3>
+    <ol class="steps">
+      <li><span>Make a <a class="gl" href="#g-backup">backup</a> of the site. Ask your <a class="gl" href="#g-host">web host</a> how to do this if you aren’t sure. Many hosts do it for you.</span></li>
+      <li><span>Log in to <a class="gl" href="#g-wpadmin">WordPress admin</a> (usually <span class="path">sunsetmoonwellnesscenter.com/wp-admin</span>).</span></li>
+      <li><span>Make one change at a time, then view the live page to check it looks right.</span></li>
+    </ol>
+  </div>
+  <nav class="toc" aria-label="Report contents">
+    <strong>In this report</strong>
+    <ol>
+      <li><a href="#summary">Summary</a></li>
+      <li><a href="#start">Start here: the fix list</a></li>
+      <li><a href="#a11y">Fixes: accessibility</a></li>
+      <li><a href="#content">Fixes: content and design</a></li>
+      <li><a href="#design">Design guidance and visitor paths</a></li>
+      <li><a href="#search">Fixes: search and AI visibility</a></li>
+      <li><a href="#pay">Fixes: booking and payments</a></li>
+      <li><a href="#tech">Fixes: security and plugins</a></li>
+      <li><a href="#glossary">Addendum: glossary</a></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="sec" id="summary" aria-labelledby="sum-h">
+  <h2 id="sum-h">Summary</h2>
+  <p class="lead">The site has a solid base. It is secure (<a class="gl" href="#g-https">HTTPS</a>), it has a search tool installed (<a class="gl" href="#g-rankmath">Rank Math</a>), and it fits on phone screens. What holds it back is broken or unfinished content, pages that are hard for some visitors to use, and a booking and payment process spread across six different outside services.</p>
+  <div class="score" role="list">
+    <div class="tile" role="listitem"><span class="k">Accessibility</span><span class="n">85</span><span class="d">problem spots found by an automated <a class="gl" href="#g-axe">accessibility scan</a>, on every page checked</span></div>
+    <div class="tile" role="listitem"><span class="k">Content &amp; design</span><span class="n">16</span><span class="d">issues with menus, buttons, trust and phone layout</span></div>
+    <div class="tile" role="listitem"><span class="k">Search (SEO)</span><span class="n">9</span><span class="d">areas that make the site harder to find on Google</span></div>
+    <div class="tile" role="listitem"><span class="k">AI answers (AEO)</span><span class="n">6</span><span class="d">gaps that keep AI assistants from recommending the site</span></div>
+    <div class="tile" role="listitem"><span class="k">Payments</span><span class="n">7</span><span class="d">booking, donation and sign-up paths reviewed</span></div>
+    <div class="tile" role="listitem"><span class="k">Security &amp; plugins</span><span class="n">4</span><span class="d">security fixes, plus why LearnPress and MemberPress failed</span></div>
+  </div>
+</section>
+
+<section class="sec" id="start" aria-labelledby="start-h">
+  <h2 id="start-h">Start here: the fix list</h2>
+  <p class="lead">Work from top to bottom. The first five take minutes and fix things visitors notice today.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th scope="col">When</th><th scope="col">Fix</th><th scope="col">Who</th><th scope="col">Time</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pri p1">Now</span></td><td><a href="#fix-classes">Fix the “RESTER HERE” buttons and remove the past class</a></td><td>You</td><td>10 min</td></tr>
+      <tr><td><span class="pri p1">Now</span></td><td><a href="#fix-social">Label the social media icons</a></td><td>You</td><td>15 min</td></tr>
+      <tr><td><span class="pri p1">Now</span></td><td><a href="#fix-embeds">Name the booking, form and donation boxes</a></td><td>You</td><td>15 min</td></tr>
+      <tr><td><span class="pri p1">Now</span></td><td><a href="#fix-typos">Fix the Donate typo and the broken image</a></td><td>You</td><td>10 min</td></tr>
+      <tr><td><span class="pri p1">Now</span></td><td><a href="#fix-robots">Update the search engine instructions file</a></td><td>You</td><td>15 min</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-design">Move text off photos and color blends</a></td><td>You</td><td>1–2 days</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-meta">Write search descriptions for each page</a></td><td>You</td><td>1–2 hrs</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-headings">Give every page one main heading</a></td><td>You</td><td>30 min</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-contrast">Make headline text easier to read</a></td><td>You</td><td>1–2 hrs</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-alt">Describe images</a></td><td>You</td><td>30 min</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-links">Rewrite “Learn More” and “click here”</a></td><td>You</td><td>30 min</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-statement">Update the accessibility statement</a></td><td>You</td><td>20 min</td></tr>
+      <tr><td><span class="pri p2">Next</span></td><td><a href="#fix-security">Close the security gaps</a></td><td>Host</td><td>1 hr</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#fix-schema">Add business, service and event details for Google</a></td><td>You</td><td>Half a day</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#fix-faq">Add FAQ sections</a></td><td>You</td><td>1–2 days</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#fix-booking">Simplify booking and show prices</a></td><td>You</td><td>1–2 weeks</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#paths-h">Rebuild pages around the four visitor paths</a></td><td>You</td><td>1 week</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#fix-nav">Improve the menus and phone layout</a></td><td>You</td><td>2–3 days</td></tr>
+      <tr><td><span class="pri p3">Later</span></td><td><a href="#fix-plugins">Sort out LearnPress and MemberPress</a></td><td>Host, developer</td><td>Varies</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Times are rough guesses for someone comfortable editing their own site.</p>
+</section>
+
+<!-- ============ ACCESSIBILITY ============ -->
+<section class="sec" id="a11y" aria-labelledby="a11y-h">
+  <h2 id="a11y-h">Fixes: accessibility</h2>
+  <p class="lead"><a class="gl" href="#g-accessibility">Accessibility</a> means people with disabilities can use the site, including people who are blind and use a <a class="gl" href="#g-screen-reader">screen reader</a>, people with low vision, and people who can’t use a mouse. Every page checked has at least one serious problem. Most come from the header and footer, which appear on every page, so fixing them once fixes every page.</p>
+
+  <article class="fix" id="fix-social">
+    <h3>The social media icons have no names</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">15 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The Facebook, YouTube, Patreon, Instagram and TikTok icons in the footer are pictures only. A screen reader just says “link” five times, so a blind visitor can’t tell where each one goes.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>In WordPress admin, open the <a class="gl" href="#g-theme">Pro theme</a>’s footer editor. In Pro this is usually under <span class="path">Pro → Footers</span>.</span></li>
+      <li><span>Click the Facebook icon to select it.</span></li>
+      <li><span>Open the <strong>Customize</strong> tab for that icon and find <strong>Custom Attributes</strong>.</span></li>
+      <li><span>Add an attribute. For <strong>Name</strong>, type <span class="path">aria-label</span>. For <strong>Value</strong>, type a plain description, such as <span class="path">Sunset Moon Wellness on Facebook</span>. This is called an <a class="gl" href="#g-aria">ARIA label</a>.</span></li>
+      <li><span>Repeat for YouTube, Patreon, Instagram and TikTok, then save.</span></li>
+    </ol>
+    <p class="note">These steps follow <a href="https://theme.co/forum/t/aria-label/95124">Themeco’s support forum</a>. If you can’t find Custom Attributes in your version, ask Themeco support where it is.</p>
+  </article>
+
+  <article class="fix" id="fix-embeds">
+    <h3>The booking, form and donation boxes have no names</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">15 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The Google Calendar booking box and the Google Form on Appointments, the Zeffy donation box on Donate, and the Google Form on Classes are <a class="gl" href="#g-embed">embeds</a>. None has a title, so a screen reader can’t say what each box is before a visitor enters it.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Open the page in the <a class="gl" href="#g-cornerstone">Cornerstone</a> editor and click the box that holds the embed code.</span></li>
+      <li><span>Find the code that starts with <span class="path">&lt;iframe</span>.</span></li>
+      <li><span>Right after <span class="path">&lt;iframe</span>, add a space and <span class="path">title="Book an appointment"</span>. Use a name that fits each box, such as <span class="path">title="Donation form"</span> or <span class="path">title="Pay another way form"</span>.</span></li>
+      <li><span>Save, then do the same for each embed.</span></li>
+    </ol>
+    <div class="example">Before: <span class="path">&lt;iframe src="https://calendar.google.com/…"</span><br>After: <span class="path">&lt;iframe title="Book an appointment" src="https://calendar.google.com/…"</span></div>
+  </article>
+
+  <article class="fix" id="fix-contrast">
+    <h3>Some headlines are hard to read</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">1–2 hrs</span></div>
+    <span class="label">What’s wrong</span>
+    <p>White headlines sit on photos and light pastel backgrounds. The <a class="gl" href="#g-contrast">contrast</a> measured 2.5 to 2.76. The minimum for readable text is 4.5, or 3 for large headlines. The homepage alone has 37 spots like this.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Open the homepage in Cornerstone and click the section behind a hard-to-read headline.</span></li>
+      <li><span>In the section’s background settings, add a dark color layer (an overlay) on top of the photo, or darken the gradient colors.</span></li>
+      <li><span>Check your colors with the free <a href="https://webaim.org/resources/contrastchecker/">WebAIM Contrast Checker</a>. Enter the text color and the darkest background color behind it. Aim for “Pass” on WCAG AA.</span></li>
+      <li><span>Repeat on other pages with text over photos.</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-headings">
+    <h3>Some pages have no main heading</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">30 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>Every page should have one main <a class="gl" href="#g-heading">heading</a>, called an H1. Purification Programs, Classes and Naturopathy have none. Screen-reader users and Google both use the H1 to understand what a page is about.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Open the page in Cornerstone and click the big title at the top (for example, “NATUROPATHY”).</span></li>
+      <li><span>In its settings, find the heading level (often shown as a tag option such as H1, H2, H3) and choose <strong>H1</strong>.</span></li>
+      <li><span>Make the words descriptive, such as “Naturopathic Consultations for Women”. Use only one H1 per page.</span></li>
+      <li><span>On Classes, dates like “October 2026” are set as headings. Change them to regular text, bold if you like.</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-alt">
+    <h3>Images aren’t described</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">30 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>Most homepage images have the description “Image”, which tells a blind visitor nothing. This description is called <a class="gl" href="#g-alt">alt text</a>. One homepage image is also broken and shows a <a class="gl" href="#g-404">404 error</a>.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Go to <span class="path">Media → Library</span> and click an image.</span></li>
+      <li><span>In <strong>Alternative Text</strong>, describe what the image shows and why it matters, in one short sentence. For example, a photo of the practitioner could be “Megan Kelly, founder of Sunset Moon Wellness.”</span></li>
+      <li><span>If an image is only decoration, leave Alternative Text empty rather than writing “Image”.</span></li>
+      <li><span>For logos, use the organization’s name: “Sunset Moon Wellness Center”.</span></li>
+    </ol>
+    <p class="note">The W3C has a simple guide for deciding: <a href="https://www.w3.org/WAI/tutorials/images/decision-tree/">An alt Decision Tree</a>. The broken image is covered under <a href="#fix-typos">Fix the Donate typo and the broken image</a>.</p>
+  </article>
+
+  <article class="fix" id="fix-links">
+    <h3>“Learn More” and “click here” don’t say where they go</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">30 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The homepage has six buttons that all say “Learn More”. Appointments has a “click here” link. Screen-reader users often jump from link to link, so they hear “Learn More” six times with no clue which is which. See <a class="gl" href="#g-link-text">link text</a>.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Open the homepage in Cornerstone and click each “Learn More” button.</span></li>
+      <li><span>Change the text to say where it goes: “Explore Naturopathy”, “See Purification Programs”, “Explore Doula Support”, and so on.</span></li>
+      <li><span>On Appointments, change “click here” to “use our pay-another-way form”.</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-statement">
+    <h3>The accessibility statement is out of date</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">20 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The statement promises to meet <a class="gl" href="#g-wcag">WCAG</a> 2.0, an older version. The current version is <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">WCAG 2.2</a>. It also lists a Gmail address, while the rest of the site uses info@sunsetmoonwellnesscenter.com.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Go to <span class="path">Pages</span> and open “Accessibility Statement”.</span></li>
+      <li><span>Change “version 2.0” to “version 2.2”.</span></li>
+      <li><span>Replace the Gmail address with info@sunsetmoonwellnesscenter.com.</span></li>
+      <li><span>Update the “last updated” date, and consider removing the outdated software list at the bottom (such as Lynx and Opera).</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-menu">
+    <h3>The phone menu button has a confusing name</h3>
+    <div class="tags"><span class="tag dev">Hire a developer</span><span class="tag">30 min</span></div>
+    <p>On phones, the menu button is announced as “Toggle Modal Content”. “Menu” would be clearer. This label is built into the theme, and changing it takes a small piece of code. Themeco’s support team <a href="https://theme.co/forum/t/how-to-add-replace-the-aria-label-of-an-element/107761">describes the code</a>. A developer can add it in minutes. This one is lower priority.</p>
+  </article>
+</section>
+
+<!-- ============ CONTENT & DESIGN ============ -->
+<section class="sec" id="content" aria-labelledby="content-h">
+  <h2 id="content-h">Fixes: content and design</h2>
+  <p class="lead">The calm look suits the brand. The problems are small errors visitors notice, a booking path that’s hard to find, and missing details that build trust.</p>
+
+  <article class="fix" id="fix-classes">
+    <h3>Class buttons say “RESTER HERE”, and a past class is still listed</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">10 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>Every registration button on the Classes page is misspelled. The Zero Waste class (August 25, 2026) is still listed as upcoming. Several classes show only a month, with no date, price or location.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Open the Classes page in Cornerstone.</span></li>
+      <li><span>Click each “RESTER HERE” button and change the text to <strong>Register</strong>, or better, “Register for Introduction to Naturopathy”.</span></li>
+      <li><span>Delete or hide the Zero Waste class section.</span></li>
+      <li><span>For each class, add the full date, time, price, and whether it’s online or in person.</span></li>
+      <li><span>Set a monthly reminder to remove classes that have passed.</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-typos">
+    <h3>A typo on Donate and a broken image on the homepage</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">10 min</span></div>
+    <ol class="steps">
+      <li><span>On Donate, change “wish to support our by contributing” to “wish to support us by contributing”.</span></li>
+      <li><span>On the homepage, a missing image shows up as broken. Open the homepage in Cornerstone and look for an empty or broken image box. Replace the image or delete the box.</span></li>
+      <li><span>On Appointments, remove the sentence about “a set minimum to the appointment scheduler for technical reasons”. Instead, explain the sliding scale in plain words, for example: “Pay what you can, from $65 to $150. Book online, or use the pay-another-way form for other amounts.”</span></li>
+    </ol>
+  </article>
+
+  <article class="fix" id="fix-nav">
+    <h3>The menus and phone layout make booking hard to find</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">2–3 days</span></div>
+    <span class="label">What’s wrong</span>
+    <ul>
+      <li>The desktop menu has two rows, and programs are mixed in with About and Donate.</li>
+      <li>Classes isn’t in the main menu at all.</li>
+      <li>There’s no clear “Book” button at the top of the page.</li>
+      <li>No logo was visible in the header during the review, though a logo file exists.</li>
+      <li>On phones, the homepage headline fills the whole first screen, so visitors see no button without scrolling. The site is otherwise <a class="gl" href="#g-responsive">responsive</a>.</li>
+    </ul>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Plan the menu on paper first. A simple layout: Services (with Naturopathy, Bodywork, Yoga, Doula Support underneath), Programs, Classes, About, Donate.</span></li>
+      <li><span>Rebuild the menu in <span class="path">Appearance → Menus</span>, or in the Pro header editor under <span class="path">Pro → Headers</span>.</span></li>
+      <li><span>Add a button to the header that says <strong>Book a Session</strong> and links to Appointments.</span></li>
+      <li><span>Check that the logo shows in the header on desktop and phone.</span></li>
+      <li><span>In Cornerstone, preview the homepage at phone size and make the headline text smaller for small screens.</span></li>
+      <li><span>Add a short trust line near the top: who Megan is, her training, and whether sessions are in person, online, or both.</span></li>
+    </ol>
+  </article>
+</section>
+
+<!-- ============ DESIGN GUIDANCE ============ -->
+<section class="sec" id="design" aria-labelledby="design-h">
+  <h2 id="design-h">Design guidance: make every page readable</h2>
+  <p class="lead">The biggest design problem is words placed on top of photos and pastel color blends on almost every section. It looks soft and pretty, but much of the text is hard or impossible to read. The fix is simple: put words on plain backgrounds and let photos sit beside them.</p>
+
+  <div class="compare" role="group" aria-label="Example: hard to read versus easy to read">
+    <figure>
+      <div class="demo demo-bad" aria-hidden="true">
+        <span class="demo-h">NATUROPATHY</span>
+        <span class="demo-p">Living in harmony with the elements of life!</span>
+      </div>
+      <figcaption><strong>Hard to read.</strong> White capital letters on a light pastel blend, like much of the current site. It fails the contrast check.</figcaption>
+    </figure>
+    <figure>
+      <div class="demo demo-good" aria-hidden="true">
+        <span class="demo-h">Naturopathy</span>
+        <span class="demo-p">Consultations that look at diet, lifestyle and herbs, online or in person.</span>
+        <span class="demo-btn">Book a naturopathy session</span>
+      </div>
+      <figcaption><strong>Easy to read.</strong> Dark text on a plain light background, normal capitals, and one clear button.</figcaption>
+    </figure>
+  </div>
+  <p class="note">These two examples are simplified drawings to show the idea, not screenshots of the site.</p>
+
+  <h3>Seven design rules for this site</h3>
+  <ol class="rules">
+    <li>
+      <strong>Put words on plain backgrounds.</strong> Use a solid light color (white, cream or a very pale tint of the brand purple) behind all paragraphs and buttons. Photos go beside the text, above it, or below it, never behind it.
+    </li>
+    <li>
+      <strong>Allow text on a photo only once per page.</strong> The top banner (the <a class="gl" href="#g-hero">hero</a>) can keep a photo with words on it, but only with a dark <a class="gl" href="#g-overlay">overlay</a> so the words pass a <a class="gl" href="#g-contrast">contrast</a> check. Keep it to a headline and one button.
+    </li>
+    <li>
+      <strong>Use the pastel color blends as trim, not backgrounds.</strong> A thin band, a divider or a card edge keeps the brand feel without covering text.
+    </li>
+    <li>
+      <strong>Write headings in normal capitals.</strong> Long headings in ALL CAPS are slower to read. “Purification Programs” reads more easily than “PURIFICATION PROGRAMS”.
+    </li>
+    <li>
+      <strong>Pick three colors and stick to them.</strong> One dark color for text (a deep plum or near-black), one light color for backgrounds, and one strong color only for buttons. Check each text-and-background pair with the <a href="https://webaim.org/resources/contrastchecker/">WebAIM Contrast Checker</a>.
+    </li>
+    <li>
+      <strong>Make body text big and left-aligned.</strong> Use at least 16-pixel text for paragraphs. Keep short headings centered if you like, but left-align paragraphs longer than two lines, which are easier to follow.
+    </li>
+    <li>
+      <strong>Give each section one job and one button.</strong> Each section explains one thing and ends with one clear <a class="gl" href="#g-cta">call to action</a>, such as “Book a naturopathy session”. Leave generous <a class="gl" href="#g-whitespace">white space</a> between sections.
+    </li>
+  </ol>
+
+  <h3>A simple layout for every service page</h3>
+  <p>Use the same order on Naturopathy, Bodywork, Yoga and Doula Support, so visitors always know where to look.</p>
+  <ol class="steps">
+    <li><span><strong>Headline (H1)</strong> that names the service and who it’s for.</span></li>
+    <li><span><strong>One sentence</strong> on what happens in a session.</span></li>
+    <li><span><strong>Format and price:</strong> online or in person, length, and the $65–$150 sliding scale.</span></li>
+    <li><span><strong>Book button</strong> that goes straight to Appointments.</span></li>
+    <li><span><strong>A real photo</strong> of Megan or the space, beside the text, with <a class="gl" href="#g-alt">alt text</a>.</span></li>
+    <li><span><strong>What to expect,</strong> in a short list.</span></li>
+    <li><span><strong>A testimonial,</strong> with permission.</span></li>
+    <li><span><strong>Questions and answers</strong> (see <a href="#fix-faq">Add FAQ sections</a>).</span></li>
+  </ol>
+
+  <article class="fix" id="fix-design">
+    <h3>How to move text off photos in Cornerstone</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">1–2 days for the whole site</span></div>
+    <ol class="steps">
+      <li><span>Start with the homepage. Open it in <a class="gl" href="#g-cornerstone">Cornerstone</a> and click a section that has words over a photo or color blend.</span></li>
+      <li><span>In the section’s background settings, remove the photo or blend and choose your light background color.</span></li>
+      <li><span>Change the heading and paragraph text color to your dark text color.</span></li>
+      <li><span>To keep the photo, add it as a separate image beside the text. A two-column row works well: photo on one side, words on the other. On phones, the columns stack.</span></li>
+      <li><span>Preview at phone size, then repeat section by section. Do one page, check it, then move on.</span></li>
+    </ol>
+    <p class="note">This also fixes most of the 37 contrast problems on the homepage. See <a href="#fix-contrast">Make headline text easier to read</a>.</p>
+  </article>
+
+  <h3 id="paths-h">Better visitor paths</h3>
+  <p>Right now, visitors hit dead ends: six “Learn More” buttons, two booking forms, class buttons that say “RESTER HERE”, and no Book button in the header. The chart below shows a simpler <a class="gl" href="#g-flow">visitor path</a>. Every page leads to one of four goals in three or four steps.</p>
+
+  <figure class="flow" aria-labelledby="flow-cap">
+    <div class="flowwrap">
+    <svg viewBox="0 0 780 560" role="img" aria-labelledby="flow-title flow-desc" xmlns="http://www.w3.org/2000/svg">
+      <title id="flow-title">Recommended visitor paths</title>
+      <desc id="flow-desc">Visitors arrive at the homepage or a service page, then follow one of four paths: book a session, take a class, donate, or stay in touch. The same steps are listed in text below the chart.</desc>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fc-arrowhead"/></marker>
+      </defs>
+      <!-- top -->
+      <rect x="215" y="10" width="350" height="54" rx="10" class="fc-start"/>
+      <text x="390" y="33" class="fc-t fc-b" text-anchor="middle">Visitor arrives</text>
+      <text x="390" y="52" class="fc-t fc-s" text-anchor="middle">from Google, social media, an AI answer or a link</text>
+      <!-- entries -->
+      <line x1="300" y1="64" x2="300" y2="96" class="fc-line" marker-end="url(#arr)"/>
+      <line x1="480" y1="64" x2="480" y2="96" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="210" y="98" width="180" height="48" rx="10" class="fc-node"/>
+      <text x="300" y="127" class="fc-t fc-b" text-anchor="middle">Homepage</text>
+      <rect x="400" y="98" width="180" height="48" rx="10" class="fc-node"/>
+      <text x="490" y="119" class="fc-t fc-b" text-anchor="middle">Service page</text>
+      <text x="490" y="137" class="fc-t fc-s" text-anchor="middle">such as Naturopathy</text>
+      <!-- rail -->
+      <line x1="300" y1="146" x2="300" y2="176" class="fc-line"/>
+      <line x1="490" y1="146" x2="490" y2="176" class="fc-line"/>
+      <line x1="100" y1="176" x2="680" y2="176" class="fc-line"/>
+      <line x1="100" y1="176" x2="100" y2="198" class="fc-line" marker-end="url(#arr)"/>
+      <line x1="293" y1="176" x2="293" y2="198" class="fc-line" marker-end="url(#arr)"/>
+      <line x1="487" y1="176" x2="487" y2="198" class="fc-line" marker-end="url(#arr)"/>
+      <line x1="680" y1="176" x2="680" y2="198" class="fc-line" marker-end="url(#arr)"/>
+
+      <!-- lane 1: book -->
+      <rect x="15" y="200" width="170" height="56" rx="10" class="fc-goal"/>
+      <text x="100" y="224" class="fc-t fc-b fc-goal-t" text-anchor="middle">Book a Session</text>
+      <text x="100" y="243" class="fc-t fc-s fc-goal-t" text-anchor="middle">button in the header</text>
+      <line x1="100" y1="256" x2="100" y2="284" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="15" y="286" width="170" height="56" rx="10" class="fc-node"/>
+      <text x="100" y="310" class="fc-t" text-anchor="middle">Pick a service</text>
+      <text x="100" y="329" class="fc-t" text-anchor="middle">and a time</text>
+      <line x1="100" y1="342" x2="100" y2="370" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="15" y="372" width="170" height="56" rx="10" class="fc-node"/>
+      <text x="100" y="396" class="fc-t" text-anchor="middle">Pay $65–$150 online</text>
+      <text x="100" y="415" class="fc-t" text-anchor="middle">or pay another way</text>
+      <line x1="100" y1="428" x2="100" y2="456" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="15" y="458" width="170" height="56" rx="10" class="fc-end"/>
+      <text x="100" y="482" class="fc-t" text-anchor="middle">Confirmation email</text>
+      <text x="100" y="501" class="fc-t" text-anchor="middle">with what to expect</text>
+
+      <!-- lane 2: class -->
+      <rect x="208" y="200" width="170" height="56" rx="10" class="fc-goal"/>
+      <text x="293" y="224" class="fc-t fc-b fc-goal-t" text-anchor="middle">Classes</text>
+      <text x="293" y="243" class="fc-t fc-s fc-goal-t" text-anchor="middle">in the main menu</text>
+      <line x1="293" y1="256" x2="293" y2="284" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="208" y="286" width="170" height="56" rx="10" class="fc-node"/>
+      <text x="293" y="310" class="fc-t" text-anchor="middle">Date, price, and</text>
+      <text x="293" y="329" class="fc-t" text-anchor="middle">online or in person</text>
+      <line x1="293" y1="342" x2="293" y2="370" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="208" y="372" width="170" height="56" rx="10" class="fc-end"/>
+      <text x="293" y="396" class="fc-t" text-anchor="middle">Register on Eventbrite</text>
+      <text x="293" y="415" class="fc-t" text-anchor="middle">and get a confirmation</text>
+
+      <!-- lane 3: donate -->
+      <rect x="402" y="200" width="170" height="56" rx="10" class="fc-goal"/>
+      <text x="487" y="224" class="fc-t fc-b fc-goal-t" text-anchor="middle">Donate</text>
+      <text x="487" y="243" class="fc-t fc-s fc-goal-t" text-anchor="middle">in the main menu</text>
+      <line x1="487" y1="256" x2="487" y2="284" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="402" y="286" width="170" height="56" rx="10" class="fc-node"/>
+      <text x="487" y="310" class="fc-t" text-anchor="middle">Donation form with a</text>
+      <text x="487" y="329" class="fc-t" text-anchor="middle">tax-deductible note</text>
+      <line x1="487" y1="342" x2="487" y2="370" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="402" y="372" width="170" height="56" rx="10" class="fc-end"/>
+      <text x="487" y="405" class="fc-t" text-anchor="middle">Thank-you email</text>
+
+      <!-- lane 4: stay -->
+      <rect x="595" y="200" width="170" height="56" rx="10" class="fc-goal"/>
+      <text x="680" y="224" class="fc-t fc-b fc-goal-t" text-anchor="middle">Stay in touch</text>
+      <text x="680" y="243" class="fc-t fc-s fc-goal-t" text-anchor="middle">in the footer</text>
+      <line x1="680" y1="256" x2="680" y2="284" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="595" y="286" width="170" height="56" rx="10" class="fc-node"/>
+      <text x="680" y="310" class="fc-t" text-anchor="middle">Newsletter signup or</text>
+      <text x="680" y="329" class="fc-t" text-anchor="middle">Patreon membership</text>
+      <line x1="680" y1="342" x2="680" y2="370" class="fc-line" marker-end="url(#arr)"/>
+      <rect x="595" y="372" width="170" height="56" rx="10" class="fc-end"/>
+      <text x="680" y="405" class="fc-t" text-anchor="middle">Welcome email</text>
+
+      <!-- legend -->
+      <rect x="215" y="530" width="14" height="14" rx="3" class="fc-goal"/>
+      <text x="236" y="542" class="fc-t fc-s">Goal (starts a path)</text>
+      <rect x="395" y="530" width="14" height="14" rx="3" class="fc-end"/>
+      <text x="416" y="542" class="fc-t fc-s">Finish (visitor done)</text>
+    </svg>
+    </div>
+    <figcaption id="flow-cap" class="note">On a phone, scroll sideways to see the whole chart. The same paths are written out below.</figcaption>
+  </figure>
+
+  <div class="paths-text">
+    <h4>The four paths, in words</h4>
+    <ul>
+      <li><strong>Book a session:</strong> Book a Session button (in the header and on every service page) → pick a service and time → pay $65–$150 online, or choose “pay another way” → confirmation email that says what to expect.</li>
+      <li><strong>Take a class:</strong> Classes in the main menu → class details with full date, price and format → register on Eventbrite and get a confirmation.</li>
+      <li><strong>Donate:</strong> Donate in the main menu → donation form with a note on tax-deductibility → thank-you email.</li>
+      <li><strong>Stay in touch:</strong> footer signup → newsletter or Patreon membership → welcome email.</li>
+    </ul>
+  </div>
+
+  <h3>What changes from today</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th scope="col">Today</th><th scope="col">Recommended</th></tr></thead>
+    <tbody>
+      <tr><td>“Appointments” is a plain text link in a crowded top row</td><td>A <strong>Book a Session</strong> button in the header on every page</td></tr>
+      <tr><td>Six “Learn More” buttons on the homepage</td><td>Each button names its goal: “Book naturopathy”, “See classes”</td></tr>
+      <tr><td>Service pages end without a booking step</td><td>Every service page has a Book button that goes straight to Appointments</td></tr>
+      <tr><td>Two separate booking forms with a confusing minimum</td><td>One Appointments page with two clear choices: pay online, or pay another way</td></tr>
+      <tr><td>Classes is missing from the main menu</td><td>Classes is in the main menu, with full details for each class</td></tr>
+      <tr><td>Patreon is an unlabeled footer icon</td><td>A labeled “Become a member” link that says what members get</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Confirmation and thank-you emails depend on each service’s own settings (Google Calendar, Eventbrite, Zeffy, MailerLite). Check that each one sends a friendly, on-brand message.</p>
+</section>
+
+<!-- ============ SEARCH ============ -->
+<section class="sec" id="search" aria-labelledby="search-h">
+  <h2 id="search-h">Fixes: search and AI visibility</h2>
+  <p class="lead"><a class="gl" href="#g-seo">SEO</a> helps people find the site on Google. <a class="gl" href="#g-aeo">AEO</a> helps AI assistants, such as ChatGPT or Google’s AI answers, understand and recommend it. The site already has <a class="gl" href="#g-rankmath">Rank Math</a> installed, which handles most of these fixes without code.</p>
+
+  <article class="fix" id="fix-meta">
+    <h3>Search descriptions are too short or cut off</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">1–2 hrs</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The <a class="gl" href="#g-meta">search description</a> is the short summary under a page’s title in Google. Here, most are taglines such as “purify your life” or “learn expand explore”. The homepage description stops mid-sentence.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Go to <span class="path">Pages</span> and open a page for editing.</span></li>
+      <li><span>Find the Rank Math box (below the editor or in the sidebar) and open <strong>Edit Snippet</strong>.</span></li>
+      <li><span>Write one or two sentences (about 140–160 characters) that say what the page offers, who it’s for, and how (online or in person).</span></li>
+      <li><span>Repeat for each page.</span></li>
+    </ol>
+    <div class="example">Example for Naturopathy: “Naturopathic, iridology and herbal consultations for women, online or in person. Donation-based sessions on a $65–$150 sliding scale.”</div>
+    <p class="note">Google’s guide: <a href="https://developers.google.com/search/docs/appearance/snippet">How to Write Meta Descriptions</a>.</p>
+  </article>
+
+  <article class="fix" id="fix-share">
+    <h3>Links shared on social media show no picture</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">10 min</span></div>
+    <p>When someone shares the homepage on Facebook or in a text, no preview image appears. This comes from <a class="gl" href="#g-og">Open Graph</a> settings.</p>
+    <ol class="steps">
+      <li><span>Make an image 1200 × 630 pixels with the logo and a calm photo.</span></li>
+      <li><span>Go to <span class="path">Rank Math → Titles &amp; Meta → Global Meta</span>.</span></li>
+      <li><span>Under <strong>OpenGraph Thumbnail</strong>, upload the image and save.</span></li>
+    </ol>
+    <p class="note">Source: <a href="https://rankmath.com/kb/titles-and-meta/">Rank Math, Titles and Meta settings</a>.</p>
+  </article>
+
+  <article class="fix" id="fix-robots">
+    <h3>The search engine instructions file slows Bing down</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">15 min</span></div>
+    <span class="label">What’s wrong</span>
+    <p>The <a class="gl" href="#g-robots">robots.txt</a> file tells search engines how to visit the site. It asks them to wait 60 seconds between pages, which slows down search engines that obey it, such as Bing. It also doesn’t point to the <a class="gl" href="#g-sitemap">sitemap</a>.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Go to <span class="path">Rank Math</span> and switch on <strong>Advanced Mode</strong> (top right).</span></li>
+      <li><span>Open <span class="path">General Settings → Edit robots.txt</span>.</span></li>
+      <li><span>Delete the line <span class="path">crawl-delay: 60</span>.</span></li>
+      <li><span>Add this line at the end: <span class="path">Sitemap: https://www.sunsetmoonwellnesscenter.com/sitemap_index.xml</span></span></li>
+      <li><span>Save.</span></li>
+    </ol>
+    <p class="note">If Rank Math says it can’t edit the file, there is a separate robots.txt file on the server. Ask your <a class="gl" href="#g-host">host</a> to make the change. Source: <a href="https://rankmath.com/kb/how-to-edit-robots-txt-with-rank-math/">Rank Math robots.txt guide</a>.</p>
+  </article>
+
+  <article class="fix" id="fix-schema">
+    <h3>Google and AI tools don’t know what kind of business this is</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">Half a day</span></div>
+    <span class="label">What’s wrong</span>
+    <p>Behind the scenes, pages carry labels called <a class="gl" href="#g-schema">structured data</a>. Right now, service pages are labeled as “articles”, like blog posts. There are no labels saying this is a nonprofit wellness center, what services it offers, or when classes happen. There’s also no address or service area on the pages checked, which matters for <a class="gl" href="#g-nap">local search</a>.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>Decide whether sessions have a public address, or are online only. This decides the business type.</span></li>
+      <li><span>Go to <span class="path">Rank Math → Titles &amp; Meta → Local SEO</span>. Fill in the organization name, logo, phone, email, address (if public) and social media links.</span></li>
+      <li><span>Open each service page (Naturopathy, Bodywork, Yoga, Doula Support) for editing. In the Rank Math box, open the <strong>Schema</strong> tab and change the type from Article to <strong>Service</strong>, if your version offers it.</span></li>
+      <li><span>For each class, add an <strong>Event</strong> schema with the date, time, price, and whether it’s online.</span></li>
+      <li><span>Test a page with Google’s free Rich Results Test (search for it by name).</span></li>
+    </ol>
+    <p class="note">Some Rank Math schema options need the paid version. If an option is missing, it may be a Pro feature. Google explains the idea in <a href="https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data">Intro to structured data</a>.</p>
+  </article>
+
+  <article class="fix" id="fix-faq">
+    <h3>No FAQs for AI assistants to quote</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">1–2 days</span></div>
+    <span class="label">What’s wrong</span>
+    <p>People ask AI assistants questions like “What happens in a naturopathic consultation?” or “Are sessions online?” The site doesn’t answer these in question-and-answer form. Pricing appears only on Appointments, so a question like “How much is iridology at Sunset Moon?” has no answer on the Iridology section.</p>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span>List the 5 questions clients ask most for each service.</span></li>
+      <li><span>Write a short, plain answer to each, two to three sentences.</span></li>
+      <li><span>Add a “Questions” section at the bottom of each service page and on Appointments.</span></li>
+      <li><span>Mention the sliding-scale price on each service page.</span></li>
+      <li><span>Keep health claims factual. Describe what a session involves, not promised results.</span></li>
+    </ol>
+  </article>
+</section>
+
+<!-- ============ PAYMENTS ============ -->
+<section class="sec" id="pay" aria-labelledby="pay-h">
+  <h2 id="pay-h">Fixes: booking and payments</h2>
+  <p class="lead">There’s no shop on the site. Instead, visitors are sent to six different services to book, pay, donate and sign up. Each one looks different and asks for details again, so some visitors give up.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th scope="col">What people do</th><th scope="col">Service used</th><th scope="col">Problem</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Book and pay for a session</th><td>Google Calendar</td><td>Has a minimum payment, so a second form is needed</td></tr>
+      <tr><th scope="row">Pay another amount (PayPal, Venmo)</th><td>Google Form</td><td>Manual follow-up; hard to find</td></tr>
+      <tr><th scope="row">Donate</th><td>Zeffy</td><td>Box has no title; typo nearby</td></tr>
+      <tr><th scope="row">Register for a class</th><td>Eventbrite</td><td>“RESTER HERE” buttons; past class listed</td></tr>
+      <tr><th scope="row">Become a member</th><td>Patreon</td><td>Only an unlabeled footer icon; benefits not explained</td></tr>
+      <tr><th scope="row">Join the newsletter</th><td>MailerLite</td><td>Opens a new tab without warning</td></tr>
+      <tr><th scope="row">Purification Programs</th><td>None</td><td>No price or next step beyond a consultation</td></tr>
+    </tbody>
+  </table></div>
+
+  <article class="fix" id="fix-booking">
+    <h3>Simplify booking and show prices</h3>
+    <div class="tags"><span class="tag you">You can do this</span><span class="tag">1–2 weeks</span></div>
+    <ol class="steps">
+      <li><span>Make Appointments the one place to book. At the top, explain the sliding scale in two sentences.</span></li>
+      <li><span>Offer two clear buttons: <strong>Book &amp; pay online</strong> and <strong>Pay another way</strong>.</span></li>
+      <li><span>Show a price, or a “starting at” range, on Purification Programs and Mentorships.</span></li>
+      <li><span>Use one place for class sign-ups (Eventbrite is fine) and link every class to it.</span></li>
+      <li><span>Add a short “Become a member” paragraph explaining what Patreon members get, with a labeled link.</span></li>
+      <li><span>On Donate, add a sentence about whether gifts are tax-deductible. Include the organization’s EIN (<a class="gl" href="#g-ein">tax ID</a>) if you choose to. It wasn’t shown on the page reviewed.</span></li>
+      <li><span>Optional: ask whoever manages <a class="gl" href="#g-ga4">Google Analytics</a> to track clicks on Book, Donate and Register, so you can see which pages bring in <a class="gl" href="#g-conversion">conversions</a>.</span></li>
+    </ol>
+  </article>
+</section>
+
+<!-- ============ SECURITY & PLUGINS ============ -->
+<section class="sec" id="tech" aria-labelledby="tech-h">
+  <h2 id="tech-h">Fixes: security and plugins</h2>
+  <p class="lead">The basics are in place: the site uses <a class="gl" href="#g-https">HTTPS</a>, and card payments happen on the outside services, not on the site. A few gaps are best handled by your host or a developer.</p>
+
+  <article class="fix" id="fix-security">
+    <h3>Close the security gaps</h3>
+    <div class="tags"><span class="tag host">Ask your web host</span><span class="tag you">Part is you</span><span class="tag">1 hr</span></div>
+    <span class="label">What’s wrong</span>
+    <ul>
+      <li>Anyone can see a list of the site’s WordPress user accounts through a public <a class="gl" href="#g-api">API</a>. That helps attackers guess login names.</li>
+      <li>The site tells visitors exactly which version of <a class="gl" href="#g-php">PHP</a> it runs, which helps attackers look for known weaknesses.</li>
+      <li>A few recommended <a class="gl" href="#g-headers">security headers</a> are missing.</li>
+      <li>A plugin exposes an <a class="gl" href="#g-mcp">MCP</a> connection to the public. It may be intended, but someone should confirm what installed it.</li>
+    </ul>
+    <span class="label">How to fix it</span>
+    <ol class="steps">
+      <li><span><strong>You:</strong> make sure every admin account uses a strong, unique password and <a class="gl" href="#g-2fa">two-factor login</a>.</span></li>
+      <li><span><strong>You:</strong> keep WordPress, the Pro theme and all <a class="gl" href="#g-plugin">plugins</a> up to date (<span class="path">Dashboard → Updates</span>). Back up first.</span></li>
+      <li><span><strong>You:</strong> go to <span class="path">Plugins</span> and look for anything mentioning MCP, AI or “abilities” that you don’t recognize. Note its name before changing it.</span></li>
+      <li><span><strong>Your host:</strong> send them the message below.</span></li>
+    </ol>
+    <div class="example">“Could you please (1) block public access to the WordPress users list at /wp-json/wp/v2/users, (2) hide the X-Powered-By header that shows our PHP version, and (3) add Referrer-Policy and Permissions-Policy headers? We’d also like advice on adding a Content-Security-Policy that won’t break our Google Calendar, Zeffy and MailerLite embeds.”</div>
+  </article>
+
+  <article class="fix" id="fix-plugins">
+    <h3>Why LearnPress and MemberPress didn’t work</h3>
+    <div class="tags"><span class="tag host">Ask your web host</span><span class="tag dev">Maybe a developer</span></div>
+    <span class="label">What we know</span>
+    <p>Neither plugin is running on the site now. The site runs WordPress 7.1.2 and PHP 8.4.25, which meet both plugins’ published requirements. The exact cause can only be seen from inside WordPress admin and the host’s error logs. Three things are likely involved:</p>
+    <ol>
+      <li><strong>Speed plugin conflicts.</strong> WP-Optimize <a class="gl" href="#g-cache">caches</a> pages and <a class="gl" href="#g-minify">bundles scripts</a>. MemberPress states its paywall features <a href="https://memberpress.com/faq/technical-requirements/">don’t work with page caching turned on</a>. Bundled scripts often break course and membership features, which fits “embeds not working”.</li>
+      <li><strong>Page builder mismatch.</strong> LearnPress is designed around <a href="https://wordpress.org/plugins/learnpress/">the WordPress block editor and Elementor</a>. This site is built with <a class="gl" href="#g-cornerstone">Cornerstone</a>.</li>
+      <li><strong>Database settings.</strong> MemberPress requires <a class="gl" href="#g-mysql">MySQL</a> 8.0 or newer with certain strict settings turned off. Only the host can check this.</li>
+    </ol>
+    <span class="label">How to find the real cause</span>
+    <ol class="steps">
+      <li><span>Screenshot the exact “incompatible” message, and note when it appeared: while installing, while activating, or on a page.</span></li>
+      <li><span>Go to <span class="path">Tools → Site Health → Info</span> and click <strong>Copy site info to clipboard</strong>. Paste it into a document to share with your host or developer.</span></li>
+      <li><span>Ask your host for a <a class="gl" href="#g-staging">staging site</a> (a private test copy) and for the PHP error log.</span></li>
+      <li><span>On the staging site only: turn off WP-Optimize’s caching and script settings, then install the plugin again.</span></li>
+      <li><span>If it still fails, switch the staging site to a default WordPress theme. If it works then, the problem is between the plugin and the Pro theme. Bring that to Themeco or a developer.</span></li>
+    </ol>
+    <span class="label">Something to consider first</span>
+    <p>Classes already run on Eventbrite, and membership on Patreon. Adding a course plugin (<a class="gl" href="#g-lms">LMS</a>) and a membership plugin means two large new tools to maintain and keep secure. If online courses are the goal, compare a hosted course platform linked from the site before spending more time on plugins.</p>
+  </article>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section class="sec" id="glossary" aria-labelledby="gl-h">
+  <h2 id="gl-h">Addendum: glossary</h2>
+  <p class="lead">Plain definitions of the terms used in this report, in alphabetical order.</p>
+  <dl class="gloss">
+    <div id="g-404"><dt>404 error</dt><dd>What a browser shows when a page or image can’t be found. Usually caused by a deleted file or a mistyped link.</dd></div>
+    <div id="g-accessibility"><dt>Accessibility</dt><dd>Designing a website so people with disabilities can use it, whether they are blind, have low vision, are deaf, or can’t use a mouse. It also tends to make the site easier for everyone.</dd></div>
+    <div id="g-aeo"><dt>AEO (answer engine optimization)</dt><dd>Making a site easy for AI assistants and search “answer boxes” to understand and quote. Clear questions and answers, plain facts, and structured data all help.</dd></div>
+    <div id="g-alt"><dt>Alt text</dt><dd>A short written description of an image. Screen readers read it aloud, and it shows if the image fails to load. <a href="https://www.w3.org/WAI/tutorials/images/decision-tree/">W3C guide</a>.</dd></div>
+    <div id="g-api"><dt>API</dt><dd>A behind-the-scenes doorway that lets software talk to the website. WordPress has one built in. Some parts of it share more than they should unless restricted.</dd></div>
+    <div id="g-aria"><dt>ARIA label</dt><dd>A hidden name added to a button or link so screen readers can announce it. Visitors can’t see it, but screen-reader users hear it.</dd></div>
+    <div id="g-axe"><dt>Automated accessibility scan (axe)</dt><dd>A free tool, axe-core, that checks a web page against accessibility rules. It finds many common problems but not all, so a person should also test the site.</dd></div>
+    <div id="g-backup"><dt>Backup</dt><dd>A saved copy of the whole site (pages, images and settings) that can be restored if something breaks.</dd></div>
+    <div id="g-cache"><dt>Caching</dt><dd>Saving a ready-made copy of each page so it loads faster. It can cause problems for features that must be different for each visitor, such as member-only content.</dd></div>
+    <div id="g-cta"><dt>Call to action (CTA)</dt><dd>A button or link that asks the visitor to do one specific thing, such as “Book a session” or “Register”.</dd></div>
+    <div id="g-contrast"><dt>Contrast (contrast ratio)</dt><dd>How much text stands out from its background, as a number. Normal text needs at least 4.5; large text needs at least 3. Check colors with the <a href="https://webaim.org/resources/contrastchecker/">WebAIM Contrast Checker</a>.</dd></div>
+    <div id="g-conversion"><dt>Conversion</dt><dd>When a visitor does what you hoped, such as booking, donating or registering.</dd></div>
+    <div id="g-cornerstone"><dt>Cornerstone</dt><dd>The drag-and-drop page editor that comes with the Pro theme. It’s where most page content on this site is edited.</dd></div>
+    <div id="g-ein"><dt>EIN (tax ID)</dt><dd>The federal tax ID number for an organization. Donors sometimes want it for their records.</dd></div>
+    <div id="g-embed"><dt>Embed (iframe)</dt><dd>A box on a page that shows content from another website, such as a Google Calendar or a donation form. The technical name is iframe.</dd></div>
+    <div id="g-ga4"><dt>Google Analytics (GA4)</dt><dd>Google’s free tool for seeing how many people visit the site and what they do there. The site already has Google Tag Manager installed, which works with it.</dd></div>
+    <div id="g-heading"><dt>Heading (H1, H2, H3)</dt><dd>Titles that organize a page, like an outline. H1 is the main title, used once per page. H2s are sections, and H3s are sub-sections.</dd></div>
+    <div id="g-hero"><dt>Hero</dt><dd>The large banner at the top of a page, usually with a big image and headline.</dd></div>
+    <div id="g-https"><dt>HTTPS</dt><dd>A secure connection between the visitor and the website, shown by the padlock in the browser. This site has it set up correctly.</dd></div>
+    <div id="g-link-text"><dt>Link text</dt><dd>The clickable words of a link or button. Good link text says where it goes (“See class schedule”) rather than “click here”.</dd></div>
+    <div id="g-lms"><dt>LMS (learning management system)</dt><dd>Software for selling and running online courses. LearnPress is one example.</dd></div>
+    <div id="g-nap"><dt>Local search (NAP)</dt><dd>How a business shows up in “near me” searches and maps. It depends on a consistent name, address and phone number (NAP) across the web.</dd></div>
+    <div id="g-mcp"><dt>MCP</dt><dd>Short for Model Context Protocol, a way for AI tools to connect to software such as WordPress. If it wasn’t set up on purpose, it should be reviewed.</dd></div>
+    <div id="g-meta"><dt>Meta description (search description)</dt><dd>The short summary Google may show under a page’s title in search results. <a href="https://developers.google.com/search/docs/appearance/snippet">Google’s guide</a>.</dd></div>
+    <div id="g-minify"><dt>Minifying and bundling scripts</dt><dd>Squeezing and combining the site’s code files so pages load faster. It sometimes breaks plugins that expect their files to load separately.</dd></div>
+    <div id="g-mysql"><dt>MySQL</dt><dd>The database where WordPress stores content and settings. Your host manages it.</dd></div>
+    <div id="g-og"><dt>Open Graph</dt><dd>Settings that control the image, title and description shown when a link is shared on social media or in a text message.</dd></div>
+    <div id="g-overlay"><dt>Overlay</dt><dd>A see-through layer of color placed over a photo so text on top is easier to read.</dd></div>
+    <div id="g-php"><dt>PHP</dt><dd>The programming language WordPress runs on. Your host controls which version the site uses.</dd></div>
+    <div id="g-plugin"><dt>Plugin</dt><dd>An add-on that gives WordPress new features, such as Rank Math for SEO. Each plugin needs regular updates.</dd></div>
+    <div id="g-rankmath"><dt>Rank Math</dt><dd>The SEO plugin installed on this site. It manages search descriptions, sitemaps, robots.txt and structured data without code.</dd></div>
+    <div id="g-responsive"><dt>Responsive design</dt><dd>A site that rearranges itself to fit phones, tablets and computers.</dd></div>
+    <div id="g-robots"><dt>robots.txt</dt><dd>A small text file that tells search engines which pages to visit and how often.</dd></div>
+    <div id="g-screen-reader"><dt>Screen reader</dt><dd>Software that reads a screen aloud for people who are blind or have low vision. Users often move through a page by jumping between headings and links.</dd></div>
+    <div id="g-headers"><dt>Security headers</dt><dd>Instructions the server sends with each page that tell browsers to block certain attacks. Your host can add them.</dd></div>
+    <div id="g-seo"><dt>SEO (search engine optimization)</dt><dd>Making a site easy for search engines like Google to find, understand and show to the right people.</dd></div>
+    <div id="g-sitemap"><dt>Sitemap</dt><dd>A list of all the site’s pages that helps search engines find them. Rank Math creates it automatically.</dd></div>
+    <div id="g-staging"><dt>Staging site</dt><dd>A private copy of the website for testing changes safely before they go live.</dd></div>
+    <div id="g-schema"><dt>Structured data (schema)</dt><dd>Hidden labels on a page that tell Google and AI tools exactly what it is: a business, a service, an event, a FAQ. <a href="https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data">Google’s intro</a>.</dd></div>
+    <div id="g-theme"><dt>Theme (Pro theme)</dt><dd>The design framework that controls how the whole site looks. This site uses Themeco’s Pro theme, with a “child theme” that holds custom changes.</dd></div>
+    <div id="g-2fa"><dt>Two-factor login (2FA)</dt><dd>A second step when logging in, such as a code from your phone, so a stolen password alone isn’t enough.</dd></div>
+    <div id="g-flow"><dt>Visitor path (user flow)</dt><dd>The steps a visitor takes to reach a goal, such as booking a session. Good paths are short and have no dead ends.</dd></div>
+    <div id="g-wcag"><dt>WCAG</dt><dd>Web Content Accessibility Guidelines, the international standard for accessible websites. Version 2.2 is current, and “AA” is the level most organizations aim for. <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">W3C overview</a>.</dd></div>
+    <div id="g-host"><dt>Web host</dt><dd>The company that runs the server the website lives on. They can help with backups, staging sites, server settings and error logs.</dd></div>
+    <div id="g-whitespace"><dt>White space</dt><dd>Empty space around text and images. It makes a page feel calm and easier to scan.</dd></div>
+    <div id="g-wpadmin"><dt>WordPress admin</dt><dd>The private dashboard where you log in to edit the site.</dd></div>
+  </dl>
+  <p class="top-link"><a href="#main">Back to the top of the report</a></p>
+</section>
+</main>
+
+<footer>
+  Prepared by Inclusive Creative. Findings reflect the live site on September 25, 2026, using the axe-core 4.10.2 accessibility scanner and a manual review of six key pages. Automated scans catch only part of accessibility issues, so a manual test with a keyboard and a screen reader is still recommended.
+</footer>
+</div>
+
+</body>
+</html>
